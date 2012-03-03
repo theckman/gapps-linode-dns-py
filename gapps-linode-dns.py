@@ -49,7 +49,6 @@ print """
 #        Now in Python!        #
 #      (written by llamas)     #
 ################################
-
 """
 
 try:

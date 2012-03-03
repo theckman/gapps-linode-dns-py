@@ -41,62 +41,61 @@ Then run the script:
 	#        Now in Python!        #
 	#      (written by llamas)     #
 	################################
-	
-	
+
 	Enter your Linode API key: [redacted]
-	
+
 	Enter domain: timheckman.net
-	
+
 	Would you like to add the recommended default SPF record for Google Apps [Y/n]: y
-	
+
 	You can also add CNAMEs to make navigating to the Google Apps web interface easier.
 	Would you like to add some Google Apps CNAMEs [y/N]: y
-	
+
 	Would you like to add a CNAME for mail.timheckman.net [y/N]: y
 	Would you like to add a CNAME for calendar.timheckman.net [y/N]: y
 	Would you like to add a CNAME for contacts.timheckman.net [y/N]: y
 	Would you like to add a CNAME for docs.timheckman.net [y/N]: y
-	
+
 	Creating MX records...
-	
+
 	ASPMX.L.GOOGLE.COM:
 	{"ERRORARRAY":[],"DATA":{"ResourceID":[redacted]},"ACTION":"domain.resource.create"}
-	
+
 	ALT1.ASPMX.L.GOOGLE.COM:
 	{"ERRORARRAY":[],"DATA":{"ResourceID":[redacted]},"ACTION":"domain.resource.create"}
-	
+
 	ALT2.ASPMX.L.GOOGLE.COM:
 	{"ERRORARRAY":[],"DATA":{"ResourceID":[redacted]},"ACTION":"domain.resource.create"}
-	
+
 	ASPMX2.GOOGLEMAIL.COM:
 	{"ERRORARRAY":[],"DATA":{"ResourceID":[redacted]},"ACTION":"domain.resource.create"}
-	
+
 	ASPMX3.GOOGLEMAIL.COM:
 	{"ERRORARRAY":[],"DATA":{"ResourceID":[redacted]},"ACTION":"domain.resource.create"}
-	
-	
+
+
 	Creating SPF record...
-	
+
 	{"ERRORARRAY":[],"DATA":{"ResourceID":[redacted]},"ACTION":"domain.resource.create"}
-	
-	
+
+
 	Creating CNAMEs...
-	
+
 	mail.timheckman.net:
 	{"ERRORARRAY":[],"DATA":{"ResourceID":[redacted]},"ACTION":"domain.resource.create"}
-	
+
 	calendar.timheckman.net:
 	{"ERRORARRAY":[],"DATA":{"ResourceID":[redacted]},"ACTION":"domain.resource.create"}
-	
+
 	contacts.timheckman.net:
 	{"ERRORARRAY":[],"DATA":{"ResourceID":[redacted]},"ACTION":"domain.resource.create"}
-	
+
 	docs.timheckman.net:
 	{"ERRORARRAY":[],"DATA":{"ResourceID":[redacted]},"ACTION":"domain.resource.create"}
-	
+
 	You'll need to update the URLs for your Google Apps Core Services to the CNAMEs
 	that you've just created: https://www.google.com/a/timheckman.net
-	
+
 	Everything should be finished at this point (assuming no errors were returned via API)!
 	Please verify the created records within the Linode DNS Manager:
 	https://manager.linode.com/dns/domain/timheckman.net
