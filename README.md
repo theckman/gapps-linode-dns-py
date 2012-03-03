@@ -22,11 +22,11 @@ The original script had more Linode community input that I had originally antici
 
 First you'll need to download the script so that you can run it:
 
-    wget "X"
+    wget "https://raw.github.com/theckman/gapps-linode-dns-py/master/gapps-linode-dns.py"
 
 or
 
-    curl -O "X"
+    curl -O "https://raw.github.com/theckman/gapps-linode-dns-py/master/gapps-linode-dns.py"
 
 Make the script executable:
 
