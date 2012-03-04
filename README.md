@@ -99,6 +99,7 @@ Then run the script:
 	Everything should be finished at this point (assuming no errors were returned via API)!
 	Please verify the created records within the Linode DNS Manager:
 	https://manager.linode.com/dns/domain/timheckman.net
+	The new records should be served by the Linode name servers in approximately 16 minutes.
 	<3 heckman
 
 #License

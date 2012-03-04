@@ -30,6 +30,7 @@ import json
 import urllib
 from sys import argv,exit
 from os import environ
+from time import localtime
 
 mxRecords = [
 	'ASPMX.L.GOOGLE.COM',
@@ -39,8 +40,19 @@ mxRecords = [
 	'ASPMX3.GOOGLEMAIL.COM'
 ]
 mxPriority = ['10', '20', '20', '30', '30']
-spf = 'v=spf1%20include:_spf.google.com%20~all'
+spf = 'v=spf1 include:_spf.google.com ~all'
 apiUrl = 'https://api.linode.com/'
+
+def min_til_update():
+	t = localtime()
+	if t.tm_min in range(0, 14, 1):
+		return 15 - t.tm_min + 3
+	elif t.tm_min in range(15, 29, 1):
+		return 30 - t.tm_min + 3
+	elif t.tm_min in range(30, 44, 1):
+		return 45 - t.tm_min + 3
+	elif t.tm_min in range(45, 59, 1):
+		return 60 - t.tm_min + 3
 
 print """
 ################################
@@ -92,12 +104,12 @@ if addCNAME == 'Y' or addCNAME == 'y':
 		cnameAdd.append( raw_input("Would you like to add a CNAME for " + cName + "." + myDomain + " [y/N]: " ) )
 
 print "\nCreating MX records...\n"
-iMx = 0
-for record in mxRecords:
+
+for record in range(len(mxRecords)):
 	params = urllib.urlencode({'api_key': apiKey, 'api_action': 'domain.resource.create',
-		'domainid': domainID, 'type': 'MX', 'target': record, 'priority': mxPriority[iMx]})
-	print "%s:\n%s\n" % (record, urllib.urlopen(apiUrl, params).read())
-	iMx+=1
+		'domainid': domainID, 'type': 'MX', 'target': mxRecords[record], 'priority': mxPriority[record]})
+	print "%s:\n%s\n" % (mxRecords[record], urllib.urlopen(apiUrl, params).read())
+
 
 if addSpf == "" or addSpf == 'Y' or addSpf == 'y':
 	print "\nCreating SPF record...\n"
@@ -107,14 +119,13 @@ if addSpf == "" or addSpf == 'Y' or addSpf == 'y':
 
 if addCNAME == 'Y' or addCNAME == 'y':
 	print"\nCreating CNAMEs...\n"
-	iCn = 0
 
-	for cName in cnameList:
-		if cnameAdd[iCn] == 'Y' or cnameAdd[iCn] == 'y':
+	for cName in range(len(cnameList)):
+		if cnameAdd[cName] == 'Y' or cnameAdd[cName] == 'y':
 			params = urllib.urlencode({'api_key': apiKey, 'api_action': 'domain.resource.create',
-				'domainid': domainID, 'type': 'CNAME', 'name': cName, 'target': 'ghs.google.com'})
-			print "%s.%s:\n%s\n" % (cName, myDomain, urllib.urlopen(apiUrl, params).read())
-		iCn+=1
+				'domainid': domainID, 'type': 'CNAME', 'name': cnameList[cName], 'target': 'ghs.google.com'})
+			print "%s.%s:\n%s\n" % (cnameList[cName], myDomain, urllib.urlopen(apiUrl, params).read())
+
 
 	print "You'll need to update the URLs for your Google Apps Core Services to the CNAMEs"
 	print "that you've just created: https://www.google.com/a/%s\n" % myDomain
@@ -122,5 +133,6 @@ if addCNAME == 'Y' or addCNAME == 'y':
 print """Everything should be finished at this point (assuming no errors were returned via API)!
 Please verify the created records within the Linode DNS Manager:
 https://manager.linode.com/dns/domain/%s
+The new records should be served by the Linode name servers in approximately %i minutes.
 <3 heckman
-""" % myDomain
+""" % (myDomain, min_til_update())
