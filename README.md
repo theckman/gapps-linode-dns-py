@@ -34,6 +34,8 @@ Make the script executable:
 
 Then run the script:
 
+	theckman@tron:~# date
+	Sun Mar  4 15:47:27 EST 2012
     theckman@tron:~# ./gapps-linode-dns.py
 	################################
 	#        Google Apps MX        #
