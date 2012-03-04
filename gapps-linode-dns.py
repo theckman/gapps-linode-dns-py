@@ -26,11 +26,11 @@
 # **** IMPORTANT PLEASE READ THE PREVIOUS SECTION ****
 ####
 
-import json
-import urllib
-from sys import argv,exit
 from os import environ
+from sys import argv,exit
 from time import localtime
+from json import loads
+from urllib import urlencode,urlopen
 
 mxRecords = [
 	'ASPMX.L.GOOGLE.COM',
@@ -78,8 +78,8 @@ except ValueError:
 		myDomain = raw_input("Enter domain: ")
 		print
 
-params = urllib.urlencode({'api_key': apiKey, 'api_action': 'domain.list'})
-jsonList = json.loads( urllib.urlopen(apiUrl, params).read() )
+params = urlencode({'api_key': apiKey, 'api_action': 'domain.list'})
+jsonList = loads( urlopen(apiUrl, params).read() )
 
 for apiDomain in jsonList['DATA']:
 	if apiDomain['DOMAIN'] == myDomain:
@@ -106,25 +106,25 @@ if addCNAME == 'Y' or addCNAME == 'y':
 print "\nCreating MX records...\n"
 
 for record in range(len(mxRecords)):
-	params = urllib.urlencode({'api_key': apiKey, 'api_action': 'domain.resource.create',
+	params = urlencode({'api_key': apiKey, 'api_action': 'domain.resource.create',
 		'domainid': domainID, 'type': 'MX', 'target': mxRecords[record], 'priority': mxPriority[record]})
-	print "%s:\n%s\n" % (mxRecords[record], urllib.urlopen(apiUrl, params).read())
+	print "%s:\n%s\n" % (mxRecords[record], urlopen(apiUrl, params).read())
 
 
 if addSpf == "" or addSpf == 'Y' or addSpf == 'y':
 	print "\nCreating SPF record...\n"
-	params = urllib.urlencode({'api_key': apiKey, 'api_action': 'domain.resource.create',
+	params = urlencode({'api_key': apiKey, 'api_action': 'domain.resource.create',
 		'domainid': domainID, 'type': 'TXT', 'target': spf,})
-	print "%s\n" % urllib.urlopen(apiUrl, params).read()
+	print "%s\n" % urlopen(apiUrl, params).read()
 
 if addCNAME == 'Y' or addCNAME == 'y':
 	print"\nCreating CNAMEs...\n"
 
 	for cName in range(len(cnameList)):
 		if cnameAdd[cName] == 'Y' or cnameAdd[cName] == 'y':
-			params = urllib.urlencode({'api_key': apiKey, 'api_action': 'domain.resource.create',
+			params = urlencode({'api_key': apiKey, 'api_action': 'domain.resource.create',
 				'domainid': domainID, 'type': 'CNAME', 'name': cnameList[cName], 'target': 'ghs.google.com'})
-			print "%s.%s:\n%s\n" % (cnameList[cName], myDomain, urllib.urlopen(apiUrl, params).read())
+			print "%s.%s:\n%s\n" % (cnameList[cName], myDomain, urlopen(apiUrl, params).read())
 
 
 	print "You'll need to update the URLs for your Google Apps Core Services to the CNAMEs"
