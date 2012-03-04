@@ -31,6 +31,9 @@ from sys import argv,exit
 from time import localtime
 from json import loads
 from urllib import urlencode,urlopen
+from signal import signal,SIGINT
+
+signal(SIGINT, lambda signal,frame:exit(0))
 
 mxRecords = [
 	'ASPMX.L.GOOGLE.COM',
