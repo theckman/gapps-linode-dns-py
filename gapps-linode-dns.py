@@ -85,10 +85,10 @@ params = urlencode({'api_key': apiKey, 'api_action': 'domain.list'})
 jsonList = loads( urlopen(apiUrl, params).read() )
 
 if len(jsonList['ERRORARRAY']) > 0:
-	print "An error has occurred pulling the domain list via the Linode API:"
+	err = ""
 	for error in jsonList['ERRORARRAY']:
-		print "Error %i - %s" % (error['ERRORCODE'], error['ERRORMESSAGE'])
-	exit(1)
+		err = err + "Error {0} - {1}\n".format(error['ERRORCODE'], error['ERRORMESSAGE'])
+	raise Exception(err)
 
 for apiDomain in jsonList['DATA']:
 	if apiDomain['DOMAIN'] == myDomain:
