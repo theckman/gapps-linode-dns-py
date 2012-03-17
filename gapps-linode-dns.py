@@ -46,6 +46,24 @@ mxPriority = ['10', '20', '20', '30', '30']
 spf = 'v=spf1 include:_spf.google.com ~all'
 apiUrl = 'https://api.linode.com/'
 
+def api(apiKey, action, params="", raiseException=False):
+	url = "{0}&api_action={1}".format(apiUrl + "?api_key=" + apiKey, action)
+	if len(params) > 0:
+		url = "{0}&{1}".format(url, urlencode(params))
+	jsonData = loads(urlopen(url).read())
+	if len(jsonData['ERRORARRAY']) > 0:
+		err = ""
+		for error in jsonData['ERRORARRAY']:
+			err = err + "Error {0} - {1}\n".format(error['ERRORCODE'], error['ERRORMESSAGE'])
+		if raiseException:
+			raise Exception(err)
+		else:
+			print "There was an issue with %r API call:" % action
+			print "Params: %r" % params
+			print err
+
+	return jsonData
+
 def min_til_update():
 	t = localtime()
 	if t.tm_min in range(0, 14, 1):
@@ -81,14 +99,7 @@ except ValueError:
 		myDomain = raw_input("Enter domain: ")
 		print
 
-params = urlencode({'api_key': apiKey, 'api_action': 'domain.list'})
-jsonList = loads( urlopen(apiUrl, params).read() )
-
-if len(jsonList['ERRORARRAY']) > 0:
-	err = ""
-	for error in jsonList['ERRORARRAY']:
-		err = err + "Error {0} - {1}\n".format(error['ERRORCODE'], error['ERRORMESSAGE'])
-	raise Exception(err)
+jsonList = api(apiKey, 'domain.list', raiseException=True)
 
 for apiDomain in jsonList['DATA']:
 	if apiDomain['DOMAIN'] == myDomain:
@@ -115,25 +126,22 @@ if addCNAME == 'Y' or addCNAME == 'y':
 print "\nCreating MX records...\n"
 
 for record in range(len(mxRecords)):
-	params = urlencode({'api_key': apiKey, 'api_action': 'domain.resource.create',
-		'domainid': domainID, 'type': 'MX', 'target': mxRecords[record], 'priority': mxPriority[record]})
-	print "%s:\n%s\n" % (mxRecords[record], urlopen(apiUrl, params).read())
+	params = {'domainid': domainID, 'type': 'MX', 'target': mxRecords[record], 'priority': mxPriority[record]}
+	print "%s:\n%s\n" % (mxRecords[record], api(apiKey, 'domain.resource.create', params))
 
 
 if addSpf == "" or addSpf == 'Y' or addSpf == 'y':
 	print "\nCreating SPF record...\n"
-	params = urlencode({'api_key': apiKey, 'api_action': 'domain.resource.create',
-		'domainid': domainID, 'type': 'TXT', 'target': spf,})
-	print "%s\n" % urlopen(apiUrl, params).read()
+	params = {'domainid': domainID, 'type': 'TXT', 'target': spf}
+	print "%s\n" % api(apiKey, 'domain.resource.create', params)
 
 if addCNAME == 'Y' or addCNAME == 'y':
 	print"\nCreating CNAMEs...\n"
 
 	for cName in range(len(cnameList)):
 		if cnameAdd[cName] == 'Y' or cnameAdd[cName] == 'y':
-			params = urlencode({'api_key': apiKey, 'api_action': 'domain.resource.create',
-				'domainid': domainID, 'type': 'CNAME', 'name': cnameList[cName], 'target': 'ghs.google.com'})
-			print "%s.%s:\n%s\n" % (cnameList[cName], myDomain, urlopen(apiUrl, params).read())
+			params = {'domainid': domainID, 'type': 'CNAME', 'name': cnameList[cName], 'target': 'ghs.google.com'}
+			print "%s.%s:\n%s\n" % (cnameList[cName], myDomain, api(apiKey, 'domain.resource.create', params))
 
 
 	print "You'll need to update the URLs for your Google Apps Core Services to the CNAMEs"
