@@ -44,7 +44,7 @@ mxRecords = [
 ]
 mxPriority = ['10', '20', '20', '30', '30']
 spf = 'v=spf1 include:_spf.google.com ~all'
-apiUrl = 'https://api.linode.com/'
+apiUrl = 'https://api.linode.com/?api_key={0}'
 
 def min_til_update():
 	t = localtime()
@@ -81,8 +81,8 @@ except ValueError:
 		myDomain = raw_input("Enter domain: ")
 		print
 
-params = urlencode({'api_key': apiKey, 'api_action': 'domain.list'})
-jsonList = loads( urlopen(apiUrl, params).read() )
+params = urlencode({'api_action': 'domain.list'})
+jsonList = loads( urlopen(apiUrl.format(apiKey), params).read() )
 
 if len(jsonList['ERRORARRAY']) > 0:
 	err = ""
@@ -115,25 +115,25 @@ if addCNAME == 'Y' or addCNAME == 'y':
 print "\nCreating MX records...\n"
 
 for record in range(len(mxRecords)):
-	params = urlencode({'api_key': apiKey, 'api_action': 'domain.resource.create',
+	params = urlencode({'api_action': 'domain.resource.create',
 		'domainid': domainID, 'type': 'MX', 'target': mxRecords[record], 'priority': mxPriority[record]})
-	print "%s:\n%s\n" % (mxRecords[record], urlopen(apiUrl, params).read())
+	print "%s:\n%s\n" % (mxRecords[record], urlopen(apiUrl.format(apiKey), params).read())
 
 
 if addSpf == "" or addSpf == 'Y' or addSpf == 'y':
 	print "\nCreating SPF record...\n"
-	params = urlencode({'api_key': apiKey, 'api_action': 'domain.resource.create',
+	params = urlencode({'api_action': 'domain.resource.create',
 		'domainid': domainID, 'type': 'TXT', 'target': spf,})
-	print "%s\n" % urlopen(apiUrl, params).read()
+	print "%s\n" % urlopen(apiUrl.format(apiKey), params).read()
 
 if addCNAME == 'Y' or addCNAME == 'y':
 	print"\nCreating CNAMEs...\n"
 
 	for cName in range(len(cnameList)):
 		if cnameAdd[cName] == 'Y' or cnameAdd[cName] == 'y':
-			params = urlencode({'api_key': apiKey, 'api_action': 'domain.resource.create',
+			params = urlencode({'api_action': 'domain.resource.create',
 				'domainid': domainID, 'type': 'CNAME', 'name': cnameList[cName], 'target': 'ghs.google.com'})
-			print "%s.%s:\n%s\n" % (cnameList[cName], myDomain, urlopen(apiUrl, params).read())
+			print "%s.%s:\n%s\n" % (cnameList[cName], myDomain, urlopen(apiUrl.format(apiKey), params).read())
 
 
 	print "You'll need to update the URLs for your Google Apps Core Services to the CNAMEs"
