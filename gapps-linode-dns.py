@@ -46,11 +46,12 @@ mxPriority = ['10', '20', '20', '30', '30']
 spf = 'v=spf1 include:_spf.google.com ~all'
 apiUrl = 'https://api.linode.com/?api_key={0}'
 
-def api(apiKey, action, params="", raiseException=False, printError=False):
+def api(apiKey, action, params="", raiseException=False, printJson=False, printError=False):
 	url = "{0}&api_action={1}".format(apiUrl.format(apiKey), action)
 	if len(params) > 0:
 		url = "{0}&{1}".format(url, urlencode(params))
-	jsonData = loads(urlopen(url).read())
+	data = urlopen(url).read()
+	jsonData = loads(data)
 	if len(jsonData['ERRORARRAY']) > 0:
 		err = ""
 		for error in jsonData['ERRORARRAY']:
@@ -58,11 +59,17 @@ def api(apiKey, action, params="", raiseException=False, printError=False):
 		if raiseException:
 			raise Exception(err)
 		else:
-			print "There was an issue with %r API call:" % action
-			print "Params: %r" % params
-			print err
-
-	return jsonData
+			if printError:
+				print "There was an issue with %r API call:" % action
+				print "Params: %r" % params
+				print err
+			else:
+				return jsonData
+	else:
+		if printJson:
+			print data
+		else:
+			return jsonData
 
 def min_til_update():
 	t = localtime()
@@ -127,13 +134,16 @@ print "\nCreating MX records...\n"
 
 for record in range(len(mxRecords)):
 	params = {'domainid': domainID, 'type': 'MX', 'target': mxRecords[record], 'priority': mxPriority[record]}
-	print "%s:\n%s\n" % (mxRecords[record], api(apiKey, 'domain.resource.create', params))
+	print "%s:" % mxRecords[record]
+	api(apiKey, 'domain.resource.create', params, printJson=True, printError=True)
+	print
 
 
 if addSpf == "" or addSpf == 'Y' or addSpf == 'y':
 	print "\nCreating SPF record...\n"
 	params = {'domainid': domainID, 'type': 'TXT', 'target': spf}
-	print "%s\n" % api(apiKey, 'domain.resource.create', params)
+	api(apiKey, 'domain.resource.create', params, printJson=True, printError=True)
+	print
 
 if addCNAME == 'Y' or addCNAME == 'y':
 	print"\nCreating CNAMEs...\n"
@@ -141,8 +151,9 @@ if addCNAME == 'Y' or addCNAME == 'y':
 	for cName in range(len(cnameList)):
 		if cnameAdd[cName] == 'Y' or cnameAdd[cName] == 'y':
 			params = {'domainid': domainID, 'type': 'CNAME', 'name': cnameList[cName], 'target': 'ghs.google.com'}
-			print "%s.%s:\n%s\n" % (cnameList[cName], myDomain, api(apiKey, 'domain.resource.create', params))
-
+			print "%s.%s:" % (cnameList[cName], myDomain)
+			api(apiKey, 'domain.resource.create', params, printJson=True, printError=True)
+			print
 
 	print "You'll need to update the URLs for your Google Apps Core Services to the CNAMEs"
 	print "that you've just created: https://www.google.com/a/%s\n" % myDomain
