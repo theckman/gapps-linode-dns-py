@@ -44,10 +44,10 @@ mxRecords = [
 ]
 mxPriority = ['10', '20', '20', '30', '30']
 spf = 'v=spf1 include:_spf.google.com ~all'
-apiUrl = 'https://api.linode.com/'
+apiUrl = 'https://api.linode.com/?api_key={0}'
 
-def api(apiKey, action, params="", raiseException=False):
-	url = "{0}&api_action={1}".format(apiUrl + "?api_key=" + apiKey, action)
+def api(apiKey, action, params="", raiseException=False, printError=False):
+	url = "{0}&api_action={1}".format(apiUrl.format(apiKey), action)
 	if len(params) > 0:
 		url = "{0}&{1}".format(url, urlencode(params))
 	jsonData = loads(urlopen(url).read())
