@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.6
+#!/usr/bin/env python
 ####
 # Copyright (c) 2012 Tim Heckman <timothy.heckman@gmail.com> and contributors
 #
@@ -35,14 +35,14 @@ from signal import signal,SIGINT
 
 signal(SIGINT, lambda signal,frame:exit(0))
 
-mxRecords = [
+mxRecords = tuple(
 	'ASPMX.L.GOOGLE.COM',
 	'ALT1.ASPMX.L.GOOGLE.COM',
 	'ALT2.ASPMX.L.GOOGLE.COM',
 	'ASPMX2.GOOGLEMAIL.COM',
 	'ASPMX3.GOOGLEMAIL.COM'
-]
-mxPriority = ['10', '20', '20', '30', '30']
+)
+mxPriority = tuple('10', '20', '20', '30', '30')
 spf = 'v=spf1 include:_spf.google.com ~all'
 apiUrl = 'https://api.linode.com/?api_key={0}'
 
@@ -94,7 +94,7 @@ print """
 try:
 	apiKey = environ['LINODE_API_KEY']
 except KeyError:
-	apiKey = raw_input("Enter your Linode API key: ")
+	apiKey = raw_input("Enter your Linode API key: ").strip()
 	print
 
 try:
@@ -106,10 +106,12 @@ except ValueError:
 		myDomain = raw_input("Enter domain: ")
 		print
 
+myDomain = myDomain.strip().lower()
+
 jsonList = api(apiKey, 'domain.list', raiseException=True)
 
 for apiDomain in jsonList['DATA']:
-	if apiDomain['DOMAIN'] == myDomain:
+	if apiDomain['DOMAIN'].lower() == myDomain:
 		domainID = apiDomain['DOMAINID']
 		break
 
@@ -117,18 +119,18 @@ if 'domainID' not in globals():
 	print "ERROR: domain (%s) not found!" % myDomain
 	exit(1)
 
-addSpf = raw_input("Would you like to add the recommended default SPF record for Google Apps [Y/n]: ")
+addSpf = raw_input("Would you like to add the recommended default SPF record for Google Apps [Y/n]: ").strip().lower()
 print
 
 print "You can also add CNAMEs to make navigating to the Google Apps web interface easier."
-addCNAME = raw_input("Would you like to add some Google Apps CNAMEs [y/N]: ")
+addCNAME = raw_input("Would you like to add some Google Apps CNAMEs [y/N]: ").strip().lower()
 print
 
-if addCNAME == 'Y' or addCNAME == 'y':
-	cnameList = ["mail", "calendar", "contacts", "docs"]
+if addCNAME == 'y':
+	cnameList = tuple('mail', 'calendar', 'contacts', 'docs')
 	cnameAdd = []
 	for cName in cnameList:
-		cnameAdd.append( raw_input("Would you like to add a CNAME for " + cName + "." + myDomain + " [y/N]: " ) )
+		cnameAdd.append( raw_input("Would you like to add a CNAME for " + cName + "." + myDomain + " [y/N]: " ).strip().lower() )
 
 print "\nCreating MX records...\n"
 
@@ -139,17 +141,17 @@ for record in range(len(mxRecords)):
 	print
 
 
-if addSpf == "" or addSpf == 'Y' or addSpf == 'y':
+if addSpf != 'n':
 	print "\nCreating SPF record...\n"
 	params = {'domainid': domainID, 'type': 'TXT', 'target': spf}
 	api(apiKey, 'domain.resource.create', params, printJson=True, printError=True)
 	print
 
-if addCNAME == 'Y' or addCNAME == 'y':
+if addCNAME == 'y':
 	print"\nCreating CNAMEs...\n"
 
 	for cName in range(len(cnameList)):
-		if cnameAdd[cName] == 'Y' or cnameAdd[cName] == 'y':
+		if cnameAdd[cName] == 'y':
 			params = {'domainid': domainID, 'type': 'CNAME', 'name': cnameList[cName], 'target': 'ghs.google.com'}
 			print "%s.%s:" % (cnameList[cName], myDomain)
 			api(apiKey, 'domain.resource.create', params, printJson=True, printError=True)
