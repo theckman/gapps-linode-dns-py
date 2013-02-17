@@ -1,6 +1,6 @@
-#!/usr/bin/env python2.6
+#!/usr/bin/env python
 ####
-# Copyright (c) 2012 Tim Heckman <timothy.heckman@gmail.com> and contributors
+# Copyright (c) 2012-2013 Tim Heckman <timothy.heckman@gmail.com> and contributors
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of this
 # software and associated documentation files (the 'Software'), to deal in the Software
@@ -20,8 +20,8 @@
 # OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 # **** IMPORTANT PLEASE READ THE FOLLOWING SECTION ****
-# This script is not written by, nor maintained by, Linode.  Nor is it affiliated
-# with Linode directly in any way.  Do not contact Linode to report any issues or
+# This script is not written by, nor maintained by, Linode. Nor is it affiliated
+# with Linode directly in any way. Do not contact Linode to report any issues or
 # file any bug reports regarding this script.
 # **** IMPORTANT PLEASE READ THE PREVIOUS SECTION ****
 ####
