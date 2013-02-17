@@ -72,15 +72,7 @@ def api(apiKey, action, params="", raiseException=False, printJson=False, printE
 			return jsonData
 
 def min_til_update():
-	t = localtime()
-	if t.tm_min in range(0, 14, 1):
-		return 15 - t.tm_min + 3
-	elif t.tm_min in range(15, 29, 1):
-		return 30 - t.tm_min + 3
-	elif t.tm_min in range(30, 44, 1):
-		return 45 - t.tm_min + 3
-	elif t.tm_min in range(45, 59, 1):
-		return 60 - t.tm_min + 3
+	return 15 - (localtime().tm_min % 15) + 3
 
 print """
 ################################
