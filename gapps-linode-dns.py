@@ -60,34 +60,34 @@ def api(apiKey, action, params="", raiseException=False, printJson=False, printE
 			raise Exception(err)
 		else:
 			if printError:
-				print "There was an issue with %r API call:" % action
-				print "Params: %r" % params
-				print err
+				print("There was an issue with %r API call:" % action)
+				print("Params: %r" % params)
+				print(err)
 			else:
 				return jsonData
 	else:
 		if printJson:
-			print data
+			print(data)
 		else:
 			return jsonData
 
 def min_til_update():
 	return 15 - (localtime().tm_min % 15) + 3
 
-print """
+print("""
 ################################
 #        Google Apps MX        #
 #    Records Creation Script   #
 #        Now in Python!        #
 #      (written by llamas)     #
 ################################
-"""
+""")
 
 try:
 	apiKey = environ['LINODE_API_KEY']
 except KeyError:
 	apiKey = raw_input("Enter your Linode API key: ")
-	print
+	print('')
 
 try:
 	myself, domain = argv
@@ -96,7 +96,7 @@ except ValueError:
 		myDomain = environ['GDOMAIN']
 	except KeyError:
 		myDomain = raw_input("Enter domain: ")
-		print
+		print('')
 
 jsonList = api(apiKey, 'domain.list', raiseException=True)
 
@@ -106,15 +106,15 @@ for apiDomain in jsonList['DATA']:
 		break
 
 if 'domainID' not in globals():
-	print "ERROR: domain (%s) not found!" % myDomain
+	print("ERROR: domain (%s) not found!" % myDomain)
 	exit(1)
 
 addSpf = raw_input("Would you like to add the recommended default SPF record for Google Apps [Y/n]: ")
-print
+print('')
 
-print "You can also add CNAMEs to make navigating to the Google Apps web interface easier."
+print("You can also add CNAMEs to make navigating to the Google Apps web interface easier.")
 addCNAME = raw_input("Would you like to add some Google Apps CNAMEs [y/N]: ")
-print
+print('')
 
 if addCNAME == 'Y' or addCNAME == 'y':
 	cnameList = ["mail", "calendar", "contacts", "docs"]
@@ -122,37 +122,37 @@ if addCNAME == 'Y' or addCNAME == 'y':
 	for cName in cnameList:
 		cnameAdd.append( raw_input("Would you like to add a CNAME for " + cName + "." + myDomain + " [y/N]: " ) )
 
-print "\nCreating MX records...\n"
+print("\nCreating MX records...\n")
 
 for record in range(len(mxRecords)):
 	params = {'domainid': domainID, 'type': 'MX', 'target': mxRecords[record], 'priority': mxPriority[record]}
-	print "%s:" % mxRecords[record]
+	print("%s:" % mxRecords[record])
 	api(apiKey, 'domain.resource.create', params, printJson=True, printError=True)
-	print
+	print('')
 
 
 if addSpf == "" or addSpf == 'Y' or addSpf == 'y':
-	print "\nCreating SPF record...\n"
+	print("\nCreating SPF record...\n")
 	params = {'domainid': domainID, 'type': 'TXT', 'target': spf}
 	api(apiKey, 'domain.resource.create', params, printJson=True, printError=True)
-	print
+	print('')
 
 if addCNAME == 'Y' or addCNAME == 'y':
-	print"\nCreating CNAMEs...\n"
+	print("\nCreating CNAMEs...\n")
 
 	for cName in range(len(cnameList)):
 		if cnameAdd[cName] == 'Y' or cnameAdd[cName] == 'y':
 			params = {'domainid': domainID, 'type': 'CNAME', 'name': cnameList[cName], 'target': 'ghs.google.com'}
-			print "%s.%s:" % (cnameList[cName], myDomain)
+			print("%s.%s:" % (cnameList[cName], myDomain))
 			api(apiKey, 'domain.resource.create', params, printJson=True, printError=True)
-			print
+			print('')
 
-	print "You'll need to update the URLs for your Google Apps Core Services to the CNAMEs"
-	print "that you've just created: https://www.google.com/a/%s\n" % myDomain
+	print("You'll need to update the URLs for your Google Apps Core Services to the CNAMEs")
+	print("that you've just created: https://www.google.com/a/%s\n" % myDomain)
 
-print """Everything should be finished at this point (assuming no errors were returned via API)!
+print("""Everything should be finished at this point (assuming no errors were returned via API)!
 Please verify the created records within the Linode DNS Manager:
 https://manager.linode.com/dns/domain/%s
 The new records should be served by the Linode name servers in approximately %i minutes.
 <3 heckman
-""" % (myDomain, min_til_update())
+""" % (myDomain, min_til_update()))
