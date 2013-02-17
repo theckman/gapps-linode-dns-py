@@ -18,7 +18,7 @@
 # HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
 # CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 # OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-#
+####
 # **** IMPORTANT PLEASE READ THE FOLLOWING SECTION ****
 # This script is not written by, nor maintained by, Linode. Nor is it affiliated
 # with Linode directly in any way. Do not contact Linode to report any issues or
@@ -60,8 +60,8 @@ def api(apiKey, action, params="", raiseException=False, printJson=False, printE
 			raise Exception(err)
 		else:
 			if printError:
-				print("There was an issue with %r API call:" % action)
-				print("Params: %r" % params)
+				print("There was an issue with {0} API call:".format(action))
+				print("Params: {0}".format(params))
 				print(err)
 			else:
 				return jsonData
@@ -106,7 +106,7 @@ for apiDomain in jsonList['DATA']:
 		break
 
 if 'domainID' not in globals():
-	print("ERROR: domain (%s) not found!" % myDomain)
+	print("ERROR: domain ({0}) not found!".format(myDomain))
 	exit(1)
 
 addSpf = raw_input("Would you like to add the recommended default SPF record for Google Apps [Y/n]: ")
@@ -126,7 +126,7 @@ print("\nCreating MX records...\n")
 
 for record in range(len(mxRecords)):
 	params = {'domainid': domainID, 'type': 'MX', 'target': mxRecords[record], 'priority': mxPriority[record]}
-	print("%s:" % mxRecords[record])
+	print("{0}:".format(mxRecords[record]))
 	api(apiKey, 'domain.resource.create', params, printJson=True, printError=True)
 	print('')
 
@@ -143,16 +143,16 @@ if addCNAME == 'Y' or addCNAME == 'y':
 	for cName in range(len(cnameList)):
 		if cnameAdd[cName] == 'Y' or cnameAdd[cName] == 'y':
 			params = {'domainid': domainID, 'type': 'CNAME', 'name': cnameList[cName], 'target': 'ghs.google.com'}
-			print("%s.%s:" % (cnameList[cName], myDomain))
+			print("{0}.{1}:".format(cnameList[cName], myDomain))
 			api(apiKey, 'domain.resource.create', params, printJson=True, printError=True)
 			print('')
 
 	print("You'll need to update the URLs for your Google Apps Core Services to the CNAMEs")
-	print("that you've just created: https://www.google.com/a/%s\n" % myDomain)
+	print("that you've just created: https://www.google.com/a/{0}\n".format(myDomain))
 
 print("""Everything should be finished at this point (assuming no errors were returned via API)!
 Please verify the created records within the Linode DNS Manager:
-https://manager.linode.com/dns/domain/%s
-The new records should be served by the Linode name servers in approximately %i minutes.
+https://manager.linode.com/dns/domain/{0}
+The new records should be served by the Linode name servers in approximately {1} minutes.
 <3 heckman
-""" % (myDomain, min_til_update()))
+""".format(myDomain, min_til_update()))
