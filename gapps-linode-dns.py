@@ -1,23 +1,25 @@
 #!/usr/bin/env python
 ####
-# Copyright (c) 2012-2013 Tim Heckman <timothy.heckman@gmail.com> and contributors
+# Copyright (c) 2012-2013 Tim Heckman <tim+code@timheckman.net> and
+# contributors
 #
-# Permission is hereby granted, free of charge, to any person obtaining a copy of this
-# software and associated documentation files (the 'Software'), to deal in the Software
-# without restriction, including without limitation the rights to use, copy, modify,
-# merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-# permit persons to whom the Software is furnished to do so, subject to the following
-# conditions:
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the 'Software'), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 #
-# The above copyright notice and this permission notice shall be included in all copies
-# or substantial portions of the Software.
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
 #
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
-# INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-# PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-# HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-# CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
-# OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 ####
 # **** IMPORTANT PLEASE READ THE FOLLOWING SECTION ****
 # This script is not written by, nor maintained by, Linode. Nor is it affiliated
@@ -132,25 +134,14 @@ for record in range(len(mxRecords)):
 	api(apiKey, 'domain.resource.create', params, printJson=True, printError=True)
 	print('')
 
-
-<<<<<<< HEAD
-if addSpf == "" or addSpf == 'Y' or addSpf == 'y':
-	print("\nCreating SPF record...\n")
-=======
 if addSpf != 'n':
 	print "\nCreating SPF record...\n"
->>>>>>> improve logic as well as handling of inputs
 	params = {'domainid': domainID, 'type': 'TXT', 'target': spf}
 	api(apiKey, 'domain.resource.create', params, printJson=True, printError=True)
 	print('')
 
-<<<<<<< HEAD
-if addCNAME == 'Y' or addCNAME == 'y':
-	print("\nCreating CNAMEs...\n")
-=======
 if addCNAME == 'y':
 	print"\nCreating CNAMEs...\n"
->>>>>>> improve logic as well as handling of inputs
 
 	for cName in range(len(cnameList)):
 		if cnameAdd[cName] == 'y':
