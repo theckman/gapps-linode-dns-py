@@ -48,6 +48,7 @@ apiUrl = 'https://api.linode.com/?api_key={0}'
 
 def api(apiKey, action, params="", raiseException=False, printJson=False,
         printError=False):
+    """short and sweet API function"""
     url = "{0}&api_action={1}".format(apiUrl.format(apiKey), action)
     if len(params) > 0:
         url = "{0}&{1}".format(url, urlencode(params))
@@ -75,6 +76,7 @@ def api(apiKey, action, params="", raiseException=False, printJson=False,
 
 
 def min_til_update():
+    """uses current time to figure out ETA until next zone refresh"""
     return 15 - (localtime().tm_min % 15) + 3
 
 print("""
